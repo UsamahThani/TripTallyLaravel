@@ -50,9 +50,9 @@
               <li class="nav-item"><a class="nav-link text-600" href="#places">Destinations</a></li>
               <li class="nav-item"><a class="nav-link text-600" href="#booking">Booking </a></li>
             </ul>
-            <form class="ps-lg-5">
-              <button class="btn btn-lg btn-outline-primary order-0" type="submit">Sign In</button>
-            </form>
+            <div class="ps-lg-5">
+              <a href="{{route('login')}}" class="btn btn-lg btn-outline-primary order-0" type="submit">Sign In</a>
+            </div>
           </div>
         </div>
       </nav>
