@@ -9,7 +9,7 @@
     <link href="{{asset('css/theme.css')}}" rel="stylesheet" />
     @vite('resources/css/app.css')
 
-    <title>Sign In | {{config('app.name')}}</title>
+    <title>@yield('title') | {{config('app.name')}}</title>
 </head>
 
 <body>

@@ -7,6 +7,6 @@
     <title>Document</title>
 </head>
 <body>
-    <h1>This is Secure page</h1>
+    <h1>This is a Secure page. And Hello {{ session('username') }} (User ID: {{ session('userID') }})</h1>
 </body>
 </html>

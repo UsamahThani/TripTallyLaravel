@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\Auth\GoogleAuthController;
+use App\Http\Controllers\Auth\AuthController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -18,10 +18,31 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-// Google OAuth Routes
-Route::controller(GoogleAuthController::class)->group(function () {
+// Google OAuth and login Routes
+Route::controller(AuthController::class)->group(function () {
+    // Google OAuth routes
     Route::get('auth/google', 'redirect')->name('auth.google');
     Route::get('auth/google-callback', 'callback')->name('auth.google-callback');
+
+    // login route
+    Route::get('/login', function () {
+        return view('auth/login');
+    })->name('getLogin');
+
+    Route::post('/login', 'login')->name('login');
+
+    // register route
+    Route::get('/register', function () {
+        return view('auth/register');
+    })->name('getRegister');
+    
+    Route::post('/register', 'register')->name('register');
+
+    // logout route
+    Route::get('/logout', function () {
+        Auth::logout();
+        return redirect('/');
+    })->name('logout');
 });
 
 
@@ -30,8 +51,6 @@ Route::get('/index', function () {
     return view('user/index');
 })->middleware('auth')->name('index');
 
-Route::get('/login', function () {
-    return view('auth/login');
-})->name('login');
+
 
 ?>

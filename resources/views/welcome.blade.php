@@ -51,7 +51,7 @@
               <li class="nav-item"><a class="nav-link text-600" href="#booking">Booking </a></li>
             </ul>
             <div class="ps-lg-5">
-              <a href="{{route('login')}}" class="btn btn-lg btn-outline-primary order-0" type="submit">Sign In</a>
+              <a href="{{route('getLogin')}}" class="btn btn-lg btn-outline-primary order-0" type="submit">Sign In</a>
             </div>
           </div>
         </div>

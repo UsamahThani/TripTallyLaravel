@@ -1,5 +1,7 @@
 @extends('layout.auth')
 
+@section('title', 'Register')
+
 @section('content')
     <main id="top">
         <div id="particles-js" class="position-absolute overflow-hidden top-0 start-0 w-100 h-100"></div>
@@ -27,13 +29,13 @@
                         <div class="d-flex justify-content-center mt-3 mb-3">
                             <span>-OR-</span>
                         </div>
-                        <a href="#" class="btn btn-danger w-100">Sign In with <i class="fa-brands fa-google"></i></a>
+                        <a href="{{route('auth.google')}}" class="btn btn-danger w-100">Sign In with <i class="fa-brands fa-google"></i></a>
                         <div class="d-flex justify-content-center mt-3 mb-3">
                             <span>-OR-</span>
                         </div>
                         <div class="d-flex justify-content-center mt-3">
                             <span>Don't have an account?</span>
-                            <a href="" class="ms-1">Sign Up</a>
+                            <a href="{{route('getRegister')}}" class="ms-1">Sign Up</a>
                         </div>
 
                         </div>
