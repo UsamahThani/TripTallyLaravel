@@ -40,7 +40,7 @@
                 <input type="password" name="password" placeholder="Enter your password" required>
             </div>
             <div class="input-box">
-                <a href="{{route('auth.google.redirect')}}" class="btn btn-danger">Sign In Via <i class="fa-brands fa-google"></i></a>
+                <a href="{{route('auth.google')}}" class="btn btn-danger">Sign In Via <i class="fa-brands fa-google"></i></a>
             </div>
             <div class="input-box h-25" id="show-pwd">
                 <i class="bi bi-eye-fill"></i><span id="pwd-text" style="cursor: pointer; user-select: none;">Show

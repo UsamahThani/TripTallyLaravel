@@ -19,14 +19,19 @@ Route::get('/', function () {
 });
 
 // Google OAuth Routes
-Route::get('/login', function () {
-    return view('auth/login');
-})->name('login');
-Route::get('/auth/google/redirect', [GoogleAuthController::class, 'redirect'])->name('auth.google.redirect');
-Route::get('/auth/google/callback', [GoogleAuthController::class, 'callback'])->name('auth.google.callback');
+Route::controller(GoogleAuthController::class)->group(function () {
+    Route::get('auth/google', 'redirect')->name('auth.google');
+    Route::get('auth/google-callback', 'callback')->name('auth.google-callback');
+});
+
 
 // User Index Route
 Route::get('/index', function () {
     return view('user/index');
 })->middleware('auth')->name('index');
+
+Route::get('/login', function () {
+    return view('auth/login');
+})->name('login');
+
 ?>

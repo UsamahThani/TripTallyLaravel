@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
 use Throwable;
+use Exception;
 use Illuminate\Support\Str;
 
 class GoogleAuthController extends Controller
@@ -24,32 +25,30 @@ class GoogleAuthController extends Controller
      */
     public function callback()
     {
-        try {
-            // Get the user information from Google
-            $user = Socialite::driver('google')->user();
-        } catch (Throwable $e) {
-            return redirect('/')->with('error', 'Google authentication failed.');
-        }
+        try{
+            $googleUser = Socialite::driver('google')->user();
 
-        // Check if the user already exists in the database
-        $existingUser = User::where('email', $user->email)->first();
+            $user = User::where('google_id', $googleUser->id)->first();
 
-        if ($existingUser) {
-            // Log the user in if they already exist
-            Auth::login($existingUser);
+            if ($user) {
+                Auth::login($user);
+                return redirect()->route('index');
         } else {
-            // Otherwise, create a new user and log them in
-            $newUser = User::updateOrCreate([
-                'email' => $user->email
-            ], [
-                'name' => $user->name,
-                'password' => bcrypt(Str::random(16)), // Set a random password
-                'email_verified_at' => now()
+            $newUser = User::create([
+                'name' => $googleUser->name,
+                'email' => $googleUser->email,
+                'google_id' => $googleUser->id,
+                'avatar' => $googleUser->avatar,
+                'password' => encrypt('password')
             ]);
-            Auth::login($newUser);
-        }
 
-        // Redirect the user to the dashboard or any other secure page
-        return redirect('/index');
+            if ($newUser) {
+                Auth::login($newUser);
+                return redirect()->route('index');
+            }
+        }
+        } catch (Exception $e) {
+            dd($e->getMessage());
+        }
     }
 }
