@@ -1,2 +1,10 @@
-@import '~bootstrap/dist/css/bootstrap.css';
-@import "~fortawesome/fontawesome-free/css/all.css";
+@import '@fortawesome/fontawesome-free/css/fontawesome.css';
+@import '@fortawesome/fontawesome-free/css/regular.css';
+@import '@fortawesome/fontawesome-free/css/solid.css';
+@import '@fortawesome/fontawesome-free/css/brands.css';
+@import 'bootstrap/dist/css/bootstrap.min.css';
+
+#particles-js {
+    background-color: #131313;
+    z-index: 0;
+}

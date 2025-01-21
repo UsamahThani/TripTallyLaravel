@@ -1,106 +1,64 @@
-<!DOCTYPE html>
-<html lang="en" dir="ltr">
+@extends('layout.auth')
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title> Traveltelly Sign In </title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link rel="stylesheet" href="{{ asset('css/signup.css') }}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
-        integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
-        crossorigin="anonymous" referrerpolicy="no-referrer" />
-</head>
+@section('content')
+    <main id="top">
+        <div id="particles-js" class="position-absolute overflow-hidden top-0 start-0 w-100 h-100"></div>
+        <div class="d-flex justify-content-center align-items-center vh-100">
+            <div class="card shadow-lg p-3 w-100 h-50" style="max-width: 400px; background-color: rgba(255, 255, 255, 0.9);">
+                <div class="card-body">
+                    <h3 class="text-center mb-3">Sign In</h3>
+                    <form method="POST" action="{{ route('login') }}">
+                        @csrf
+                        <div class="input-group mb-3">
+                            <input type="email" class="form-control" id="email" name="email" placeholder="Email"
+                                required>
+                            <span class="input-group-text"><i class="fa-regular fa-envelope"></i></span>
+                        </div>
+                        <div class="input-group mb-3">
+                            <input type="password" class="form-control" id="password" name="password"
+                                placeholder="Password" required>
+                            <span class="input-group-text" id="show-pwd"><i class="fa-regular fa-eye"
+                                    style="cursor: pointer; user-select: none;"></i></span>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <a href="#" class="text-decoration-none">Forgot Password?</a>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Sign In</button>
+                        <div class="d-flex justify-content-center mt-3 mb-3">
+                            <span>-OR-</span>
+                        </div>
+                        <a href="#" class="btn btn-danger w-100">Sign In with <i class="fa-brands fa-google"></i></a>
+                        <div class="d-flex justify-content-center mt-3 mb-3">
+                            <span>-OR-</span>
+                        </div>
+                        <div class="d-flex justify-content-center mt-3">
+                            <span>Don't have an account?</span>
+                            <a href="" class="ms-1">Sign Up</a>
+                        </div>
 
-<body>
-    <div class="wrapper">
-        <form action="fn_signin.php" method="POST">
-            <div class="top-container">
-                <h2>Sign In</h2>
-                {{-- <div class="checkbox-wrapper-35">
-                    <input value="Yes" name="isAdmin" id="switch" type="checkbox" class="switch" <?php echo $isAdmin; ?>>
-                    <label for="switch">
-                        <span class="switch-x-text">Log in as </span>
-                        <span class="switch-x-toggletext">
-                            <span class="switch-x-unchecked"><span class="switch-x-hiddenlabel">Unchecked:
-                                </span>User</span>
-                            <span class="switch-x-checked"><span class="switch-x-hiddenlabel">Checked:
-                                </span>Admin</span>
-                        </span>
-                    </label>
-                </div> --}}
+                        </div>
+                    </form>
+                </div>
             </div>
-
-            <div class="input-box">
-                <input type="text" name="email" placeholder="Enter your email" required>
-            </div>
-            <div class="input-box">
-                <input type="password" name="password" placeholder="Enter your password" required>
-            </div>
-            <div class="input-box">
-                <a href="{{route('auth.google')}}" class="btn btn-danger">Sign In Via <i class="fa-brands fa-google"></i></a>
-            </div>
-            <div class="input-box h-25" id="show-pwd">
-                <i class="bi bi-eye-fill"></i><span id="pwd-text" style="cursor: pointer; user-select: none;">Show
-                    Password</span>
-            </div>
-            <div class="input-box button">
-                <input type="submit" value="Sign In Now">
-            </div>
-            <div class="text no-acc-text">
-                <h3>Does not have an account? <a href="signup.php">Sign Up Now</a></h3>
-            </div>
-            <div class="text forgot-pwd">
-                <h3>Forgot password? <a href="resetPassword.php">Reset Password</a></h3>
-            </div>
-        </form>
-    </div>
-    {{-- <script>
-        // Add an event listener to the checkbox
-        const switchCheckbox = document.getElementById("switch");
-        const noAccText = document.querySelector(".no-acc-text");
-
-        switchCheckbox.addEventListener("change", function () {
-            if (this.checked) {
-                noAccText.classList.add("hidden"); // Add hidden class
-            } else {
-                noAccText.classList.remove("hidden"); // Remove hidden class
-            }
-        });
-    </script> --}}
-
+        </div>
+    </main>
     <script>
-        // show password
-        const showPwd = document.getElementById("show-pwd");
-        const pwdText = document.getElementById("pwd-text");
-        const pwdInput = document.querySelector("input[name='password']");
-        const eyeIcon = document.querySelector(".bi-eye-fill");
-        showPwd.addEventListener("click", function() {
-            if (pwdInput.type === "password") {
-                pwdInput.type = "text";
-                pwdText.textContent = "  Hide Password";
-                eyeIcon.classList.remove("bi-eye-fill");
-                eyeIcon.classList.add("bi-eye-slash-fill");
-            } else {
-                pwdInput.type = "password";
-                pwdText.textContent = "  Show Password";
-                eyeIcon.classList.remove("bi-eye-slash-fill");
-                eyeIcon.classList.add("bi-eye-fill");
-            }
+        document.addEventListener('DOMContentLoaded', () => {
+            const showPwd = document.querySelector('#show-pwd');
+            const pwdInput = document.querySelector('input[name="password"]');
+            const eyeIcon = document.querySelector('.fa-eye');
+
+            showPwd.addEventListener('click', () => {
+                if (pwdInput.type === 'password') {
+                    pwdInput.type = 'text';
+                    eyeIcon.classList.remove('fa-eye');
+                    eyeIcon.classList.add('fa-eye-slash');
+                } else {
+                    pwdInput.type = 'password';
+                    eyeIcon.classList.remove('fa-eye-slash');
+                    eyeIcon.classList.add('fa-eye');
+                }
+            });
         });
     </script>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous">
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
-        integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous">
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"
-        integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous">
-    </script>
-</body>
-
-</html>
+@endsection
