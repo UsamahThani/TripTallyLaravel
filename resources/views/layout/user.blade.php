@@ -23,7 +23,8 @@
     <title>@yield('title') | {{ config('app.name') }}</title>
 </head>
 
-<body>
+<body class="{{ Route::currentRouteName() === 'index' ? 'overflow-hidden' : '' }}">
+
     <main class="main" id="top">
         <nav class="navbar navbar-expand-lg fixed-top py-3 backdrop" data-navbar-on-scroll="data-navbar-on-scroll">
             <div class="container"><a class="navbar-brand d-flex align-items-center fw-bold fs-2" href="#"> <img
@@ -40,9 +41,27 @@
                   <li class="nav-item"><a class="nav-link text-600" href="#places">Destinations</a></li>
                   <li class="nav-item"><a class="nav-link text-600" href="#booking">Booking </a></li> --}}
                     </ul>
-                    <div class="ps-lg-5">
-                        <a href="{{ route('getLogin') }}" class="btn btn-lg btn-outline-primary order-0"
-                            type="submit">Sign In</a>
+                    <div class="ps-lg-5 d-flex align-items-center">
+                        <a href="" class="btn position-relative me-3">
+                            <i class="fa-solid fa-cart-shopping fa-lg"></i>
+                            <span
+                                class="position-absolute top-20 start-90 translate-middle p-1 bg-danger border border-light rounded-circle">
+                                <span class="visually-hidden">items in cart</span>
+                            </span>
+                        </a>
+                        <div class="dropdown">
+                            <img src="{{ Auth::user()->avatar }}" class="img-fluid dropbtn" onclick="dropdown()"
+                                style="border-radius: 50%; cursor: pointer;" width="60rem" alt="">
+                            <div id="myDropdown" class="dropdown-menu dropdown-menu-dark">
+                                <li><a class="dropdown-item" href="#">Account Settings</a></li>
+                                <li><a class="dropdown-item" href="#">Purchase History</a></li>
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
+                                <li><a class="dropdown-item" href="{{route('logout')}}">Sign Out</a></li>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
             </div>
@@ -54,6 +73,23 @@
         rel="stylesheet">
     @vite('resources/js/app.js')
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script>
+        function dropdown() {
+            document.getElementById("myDropdown").classList.toggle("show");
+        }
+
+        window.onclick = function(event) {
+            if (!event.target.matches('.dropbtn')) {
+                var dropdowns = document.getElementsByClassName("dropdown-menu");
+                for (var i = 0; i < dropdowns.length; i++) {
+                    var openDropdown = dropdowns[i];
+                    if (openDropdown.classList.contains('show')) {
+                        openDropdown.classList.remove('show');
+                    }
+                }
+            }
+        }
+    </script>
 </body>
 
 </html>

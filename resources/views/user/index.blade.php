@@ -5,7 +5,7 @@
 @section('content')
     <section class="py-0">
         <div class="bg-holder d-none d-md-block"
-            style="background-image:url({{ asset('img/illustrations/hero.png') }});background-position:right bottom;background-size:contain;">
+            style="background-image:url({{ asset('img/background/vector_travel.png') }});background-position:right bottom;background-size:contain;">
         </div>
         <!--/.bg-holder-->
 
@@ -13,11 +13,11 @@
             <div class="row align-items-center min-vh-75 my-lg-8">
                 <div class="col-md-7 col-lg-6 text-center text-md-start py-8">
                     <h1 class="mb-4 display-1 lh-sm">Trip Finder</h1>
-                    <form action="">
+                    <form action="" method="POST">
                         <div class="input-group mb-3">
                             <label class="visually-hidden" for="autoSizingSelect">From Location</label>
-                            <select class="form-select" name="from_location" required id="autoSizingSelect"
-                                style="color:#828282;" onfocus='this.size=5;' onblur='this.size=1;'
+                            <select class="form-select expandable-select" name="from_location" required
+                                id="autoSizingSelect" style="color:#828282;" onfocus='this.size=5;' onblur='this.size=1;'
                                 onchange='this.size=1; this.blur();'>
                                 <option value="" disabled selected>From</option>
                                 @foreach ($states as $state)
@@ -27,8 +27,8 @@
                         </div>
                         <div class="input-group mb-3">
                             <label class="visually-hidden" for="autoSizingSelect">Destination Location</label>
-                            <select class="form-select" name="from_location" required id="autoSizingSelect"
-                                style="color:#828282;" onfocus='this.size=5;' onblur='this.size=1;'
+                            <select class="form-select expandable-select" name="from_location" required
+                                id="autoSizingSelect" style="color:#828282;" onfocus='this.size=5;' onblur='this.size=1;'
                                 onchange='this.size=1; this.blur();'>
                                 <option value="" disabled selected>Destination</option>
                                 @foreach ($states as $state)
@@ -37,20 +37,24 @@
                             </select>
                         </div>
                         <div class="input-group mb-3">
-                            <span class="input-group-text text-dark"><i class="fa-solid fa-plane-departure fa-lg"></i></span>
+                            <span class="input-group-text text-dark d-flex justify-content-center" style="width: 55px"><i
+                                    class="fa-solid fa-plane-departure fa-lg"></i></span>
                             <input placeholder="Departure Date" class="form-control" type="text" style="color:#828282;"
                                 onfocus="(this.type='date')" id="departureDate" />
                             <input placeholder="Return Date" class="form-control" type="text" style="color:#828282;"
                                 name="return_date" id="returnDate" onfocus="(this.type='date')" />
-                            <span class="input-group-text text-dark"><i class="fa-solid fa-plane-arrival fa-flip-horizontal fa-lg"></i></span>
+                            <span class="input-group-text text-dark d-flex justify-content-center" style="width: 55px"><i
+                                    class="fa-solid fa-plane-arrival fa-flip-horizontal fa-lg"></i></span>
                         </div>
                         <div class="input-group mb-4">
-                            <span class="input-group-text text-dark">RM</span>
+                            <span class="input-group-text text-dark d-flex justify-content-center fw-bold"
+                                style="width: 55px">RM</span>
                             <input placeholder="Max Budget" min="200" step="1.00" class="form-control"
                                 type="number" style="color:#828282;" name="return_date" />
                             <input placeholder="Person" min="1" max="10" class="form-control" type="number"
                                 style="color:#828282;" name="return_date" />
-                            <span class="input-group-text text-dark"><i class="fa-solid fa-user fa-xl"></i></span>
+                            <span class="input-group-text text-dark d-flex justify-content-center" style="width: 55px"><i
+                                    class="fa-solid fa-user fa-lg"></i></span>
                         </div>
                         <div class="input-group mb-3">
                             <input type="submit" class="form-control btn btn-primary" value="Search" />
@@ -70,4 +74,38 @@
             returnDateInput.setAttribute('min', departureDate);
         });
     </script>
+
+    <script>
+        const expandableSelects = document.querySelectorAll('.expandable-select');
+
+        expandableSelects.forEach(select => {
+            select.addEventListener('focus', () => {
+                select.style.maxHeight = '200px'; // Expand smoothly
+                select.style.overflowY = 'auto'; // Enable scrolling if needed
+            });
+
+            select.addEventListener('blur', () => {
+                setTimeout(() => { // Slight delay to allow transition to complete before removing scroll
+                    select.style.maxHeight = '40px'; // Collapse smoothly
+                    select.style.overflowY = 'hidden'; // Prevent scrollbar flickering
+                }, 100); // Adjust this delay as needed for smoothness
+            });
+
+            select.addEventListener('change', () => {
+                select.style.maxHeight = '40px'; // Collapse when option is selected
+                select.style.overflowY = 'hidden'; // Disable scrolling
+            });
+        });
+    </script>
+
+    <style>
+        .expandable-select {
+            transition: max-height 0.3s ease-in-out;
+            /* Smooth transition for opening and closing */
+            overflow-y: hidden;
+            /* Prevent scrollbar initially */
+            max-height: 40px;
+            /* Initial collapsed height */
+        }
+    </style>
 @endsection

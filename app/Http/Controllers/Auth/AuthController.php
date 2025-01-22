@@ -21,7 +21,7 @@ class AuthController extends Controller
      */
     public function index() {
         $state = MyStates::getStates();
-        return view('user/index')->with('states', $state);
+        return view('user/index', ['states' => $state]);
     }
 
     /**
