@@ -5,6 +5,9 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
+use Laravel\Socialite\Facades\Socialite;
+use Illuminate\Support\Facades\Log;
+use App\Models\User;
 
 class VerificationController extends Controller
 {
@@ -36,14 +39,20 @@ class VerificationController extends Controller
 
         // Store google_id and avatar if available
         $user = $request->user();
-        if ($user->google_id && $user->avatar) {
-            $user->update([
-                'google_id' => $user->google_id,
-                'avatar' => $user->avatar,
-            ]);
+        if (!$user->google_id || !$user->avatar) {
+            try {
+                $user->update([
+                    'google_id' => $user->id,
+                    'avatar' => $user->avatar,
+                ]);
+            } catch (\Exception $e) {
+                // Handle the exception if needed
+                Log::error('Failed to retrieve user from Google: ' . $e->getMessage());
+            }
         }
 
-        return redirect()->route('index');
+        // should redirect to a page with saying account verfied and have a button to redirect to login page
+        return redirect()->route('login');
     }
 
     /**
@@ -52,6 +61,9 @@ class VerificationController extends Controller
     public function resend(Request $request)
     {
         $request->user()->sendEmailVerificationNotification();
-        return back()->with('success', 'Email verification link sent!');
+
+        // should redirect to login page
+        return redirect('login')->with('success', 'Email verification link sent!');
+        
     }
 }

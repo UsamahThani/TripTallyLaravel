@@ -12,6 +12,7 @@ use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Hash;
 use AiFaiz\Malaysia\MyStates;
+use Illuminate\Support\Facades\Log;
 
 class AuthController extends Controller
 {
@@ -21,6 +22,7 @@ class AuthController extends Controller
      */
     public function index() {
         $state = MyStates::getStates();
+        
         return view('user/index', ['states' => $state]);
     }
 
@@ -129,7 +131,7 @@ class AuthController extends Controller
             return redirect('/index');
         }
 
-        return back()->with('error', 'Invalid login credentials.');
+        return redirect('/login')->with('error', 'Invalid login credentials.');
     }
 
     /**
