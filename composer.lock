@@ -4,8 +4,66 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c7b3d9bfb121b216d1211952cd6d4f1c",
+    "content-hash": "b76ddee3b0814ebc265c807fe1b549ae",
     "packages": [
+        {
+            "name": "aifaiz/myrstates",
+            "version": "1.0.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/aifaiz/laravel-malaysian-states.git",
+                "reference": "bd1d67297679a39e48181c254d4a3f3240d9ecb7"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/aifaiz/laravel-malaysian-states/zipball/bd1d67297679a39e48181c254d4a3f3240d9ecb7",
+                "reference": "bd1d67297679a39e48181c254d4a3f3240d9ecb7",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.1"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "6.*"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "aliases": {
+                        "MalayStates": "AiFaiz\\Malaysia\\MyStates"
+                    },
+                    "providers": [
+                        "AiFaiz\\Malaysia\\MyStatesServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "AiFaiz\\Malaysia\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Hamizulfaiz Sapwan",
+                    "email": "me@hamizulfaiz.com"
+                }
+            ],
+            "description": "Laravel Library for Malaysian states list",
+            "homepage": "https://hamizulfaiz.com",
+            "keywords": [
+                "Malaysia",
+                "states"
+            ],
+            "support": {
+                "issues": "https://github.com/aifaiz/laravel-malaysian-states/issues",
+                "source": "https://github.com/aifaiz/laravel-malaysian-states/tree/1.0.3"
+            },
+            "time": "2019-08-10T09:37:45+00:00"
+        },
         {
             "name": "brick/math",
             "version": "0.12.1",

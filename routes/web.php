@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Auth\AuthController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Auth\VerificationController; // Ensure this class exists in the specified namespace
 
 /*
 |--------------------------------------------------------------------------
@@ -43,14 +44,19 @@ Route::controller(AuthController::class)->group(function () {
         Auth::logout();
         return redirect('/');
     })->name('logout');
+    
+    // User Index Route
+    Route::get('/index', 'index')->middleware('auth')->name('index');
 });
 
 
-// User Index Route
-Route::get('/index', function () {
-    return view('user/index');
-})->middleware('auth')->name('index');
 
-
+// Email Verification Routes
+Route::controller(VerificationController::class)->group(function () {
+    // email verification route
+    Route::get('/email/verify', 'notice')->name('verification.notice');
+    Route::get('/email/verify/{id}/{hash}', 'verify')->name('verification.verify');
+    Route::post('/email/resend', 'resend')->name('verification.resend');
+});
 
 ?>

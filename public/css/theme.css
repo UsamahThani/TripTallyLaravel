@@ -17303,23 +17303,23 @@ fieldset:disabled .btn {
 -----------------------------------------------*/
 ::-webkit-input-placeholder {
   opacity: 1;
-  color: #d7d6da !important;
+  color: #828282 !important;
 }
 ::-moz-placeholder {
   opacity: 1;
-  color: #d7d6da !important;
+  color: #828282 !important;
 }
 :-ms-input-placeholder {
   opacity: 1;
-  color: #d7d6da !important;
+  color: #828282 !important;
 }
 ::-ms-input-placeholder {
   opacity: 1;
-  color: #d7d6da !important;
+  color: #828282 !important;
 }
 ::placeholder {
   opacity: 1;
-  color: #d7d6da !important;
+  color: #828282 !important;
 }
 
 html {

@@ -8,11 +8,22 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Throwable;
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Hash;
+use AiFaiz\Malaysia\MyStates;
 
 class AuthController extends Controller
 {
+
+    /**
+     * Show the index.
+     */
+    public function index() {
+        $state = MyStates::getStates();
+        return view('user/index')->with('states', $state);
+    }
+
     /**
      * Redirect the user to Google’s OAuth page.
      */
@@ -37,6 +48,10 @@ class AuthController extends Controller
         $existingUser = User::where('email', $user->email)->first();
 
         if ($existingUser) {
+            $existingUser->update([
+                'google_id' => $user->id,
+                'avatar' => $user->avatar
+            ]);
             // Log the user in if they already exist
             Auth::login($existingUser);
         } else {
@@ -45,13 +60,16 @@ class AuthController extends Controller
                 'email' => $user->email
             ], [
                 'name' => $user->name,
-                'password' => bcrypt(Str::random(16)), // Set a random password
+                'password' => Hash::make(Str::random(16)), // Set a random password
                 'email_verified_at' => now(),
                 'avatar' => $user->avatar,
                 'google_id' => $user->id
             ]);
             Auth::login($newUser);
         }
+        // set session
+        request()->session()->put('username', Auth::user()->name);
+        request()->session()->put('userID', Auth::user()->id);
 
         // Redirect the user to the dashboard or any other secure page
         return redirect('/index');
@@ -71,9 +89,13 @@ class AuthController extends Controller
 
         $user = $this->create($request->all());
 
-        session()->flash('success', 'Your account has been created. You can now log in.');
+        event(new Registered($user));
 
-        return redirect('/login');
+        $credentials = $request->only('email', 'password');
+        Auth::attempt($credentials);
+        $request->session()->regenerate();
+        return redirect()->route('verification.notice');
+
     }
 
     /**
@@ -100,6 +122,7 @@ class AuthController extends Controller
         ]);
 
         if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
+            $request->session()->regenerate();
             $request->session()->put('username', Auth::user()->name);
             $request->session()->put('userID', Auth::user()->id);
             
@@ -107,5 +130,16 @@ class AuthController extends Controller
         }
 
         return back()->with('error', 'Invalid login credentials.');
+    }
+
+    /**
+     * Handle the logout request.
+     */
+    public function logout(Request $request)
+    {
+        Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+        return redirect('/');
     }
 }
