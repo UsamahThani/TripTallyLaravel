@@ -66,4 +66,9 @@ Route::controller(TripController::class)->group(function() {
         return view('user.hotel');
     });
 });
+
+// Error Route
+Route::get('/error', function() {
+    return view('error.fail');
+})
 ?>
