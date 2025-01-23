@@ -2,7 +2,8 @@
 
 use App\Http\Controllers\Auth\AuthController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Auth\VerificationController; // Ensure this class exists in the specified namespace
+use App\Http\Controllers\Auth\VerificationController; 
+use App\Http\Controllers\Trip\TripController;
 
 /*
 |--------------------------------------------------------------------------
@@ -49,8 +50,6 @@ Route::controller(AuthController::class)->group(function () {
     Route::get('/index', 'index')->middleware('auth')->name('index');
 });
 
-
-
 // Email Verification Routes
 Route::controller(VerificationController::class)->group(function () {
     // email verification route
@@ -59,4 +58,12 @@ Route::controller(VerificationController::class)->group(function () {
     Route::post('/email/resend', 'resend')->name('verification.resend');
 });
 
+// Trip Finder Route
+Route::controller(TripController::class)->group(function() {
+    // trip finder route
+    Route::post('/trip/place', 'searchPlace')->name('trip.place');
+    Route::get('/trip/hotel', function() {
+        return view('user.hotel');
+    });
+});
 ?>
