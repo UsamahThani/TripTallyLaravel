@@ -37,22 +37,8 @@ class VerificationController extends Controller
     {
         $request->fulfill();
 
-        // Store google_id and avatar if available
-        $user = $request->user();
-        if (!$user->google_id || !$user->avatar) {
-            try {
-                $user->update([
-                    'google_id' => $user->id,
-                    'avatar' => $user->avatar,
-                ]);
-            } catch (\Exception $e) {
-                // Handle the exception if needed
-                Log::error('Failed to retrieve user from Google: ' . $e->getMessage());
-            }
-        }
-
-        // should redirect to a page with saying account verfied and have a button to redirect to login page
-        return redirect()->route('login');
+        // should redirect to a page with saying account verified and have a button to redirect to login page
+        return redirect()->route('login')->with('success', 'Your account have been verified. You can log in now.');
     }
 
     /**

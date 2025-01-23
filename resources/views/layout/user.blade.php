@@ -15,8 +15,8 @@
     <!--    Stylesheets-->
     <!-- ===============================================-->
     <link href="vendors/plyr/plyr.css" rel="stylesheet">
+    @vite('resources/css/app.css')
     <link href="{{ asset('css/theme.css') }}" rel="stylesheet" />
-    {{-- @vite('resources/css/app.css') --}}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
         integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -34,7 +34,7 @@
                     data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
                     aria-expanded="false" aria-label="Toggle navigation"><span
                         class="navbar-toggler-icon"></span></button>
-                <div class="collapse navbar-collapse border-top border-lg-0 mt-4 mt-lg-0" id="navbarSupportedContent">
+                <div class="collapse navbar-collapse  mt-4 mt-lg-0" id="navbarSupportedContent">
                     <ul class="navbar-nav ms-auto pt-2 pt-lg-0">
                         {{-- <li class="nav-item"><a class="nav-link active" aria-current="page" href="#">Home</a></li>
                   <li class="nav-item"><a class="nav-link text-600" href="#featuresVideos">Video</a></li>
@@ -42,7 +42,7 @@
                   <li class="nav-item"><a class="nav-link text-600" href="#booking">Booking </a></li> --}}
                     </ul>
                     <div class="ps-lg-5 d-flex align-items-center">
-                        <a href="" class="btn position-relative me-3">
+                        <a href="" class="h-100 position-relative me-3">
                             <i class="fa-solid fa-cart-shopping fa-lg"></i>
                             <span
                                 class="position-absolute top-20 start-90 translate-middle p-1 bg-danger border border-light rounded-circle">
@@ -50,7 +50,7 @@
                             </span>
                         </a>
                         <div class="dropdown">
-                            <img src="{{ Auth::user()->avatar }}" class="img-fluid dropbtn" onclick="dropdown()"
+                            <img src="{{ Auth::user()->avatar ?? asset('img/icons/user_avatar.jpg')}}" class="img-fluid dropbtn" onclick="dropdown()"
                                 style="border-radius: 50%; cursor: pointer;" width="60rem" alt="">
                             <div id="myDropdown" class="dropdown-menu dropdown-menu-dark">
                                 <li><a class="dropdown-item" href="#">Account Settings</a></li>

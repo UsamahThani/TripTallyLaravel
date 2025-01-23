@@ -40,6 +40,9 @@ class User extends Authenticatable
         'google_id',
         'avatar',
         'role',
+        'access_token',
+        'refresh_token',
+        'expires_in'
     ];
 
     /**

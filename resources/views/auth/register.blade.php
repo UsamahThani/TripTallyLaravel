@@ -177,9 +177,6 @@
             });
         });
 
-        // disable right click on particles-js
-        document.getElementById('particles-js').addEventListener('contextmenu', function(event) {
-            event.preventDefault();
-        });
+        
     </script>
 @endsection

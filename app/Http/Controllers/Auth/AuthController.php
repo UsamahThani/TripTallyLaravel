@@ -31,7 +31,12 @@ class AuthController extends Controller
      */
     public function redirect()
     {
-        return Socialite::driver('google')->redirect();
+        return Socialite::driver('google')
+        ->with([
+            'access_type' => 'offline', 
+            'prompt' => 'consent'
+        ])
+        ->redirect();
     }
 
     /**
@@ -52,7 +57,10 @@ class AuthController extends Controller
         if ($existingUser) {
             $existingUser->update([
                 'google_id' => $user->id,
-                'avatar' => $user->avatar
+                'avatar' => $user->avatar_original,
+                'access_token' => $user->token,
+                'refresh_token' => $user->refreshToken,
+                'expires_in' => $user -> expiresIn
             ]);
             // Log the user in if they already exist
             Auth::login($existingUser);
@@ -64,8 +72,11 @@ class AuthController extends Controller
                 'name' => $user->name,
                 'password' => Hash::make(Str::random(16)), // Set a random password
                 'email_verified_at' => now(),
-                'avatar' => $user->avatar,
-                'google_id' => $user->id
+                'avatar' => $user->avatar_original,
+                'google_id' => $user->id,
+                'access_token' => $user->token,
+                'refresh_token' => $user->refreshToken,
+                'expires_in' => $user -> expiresIn
             ]);
             Auth::login($newUser);
         }
