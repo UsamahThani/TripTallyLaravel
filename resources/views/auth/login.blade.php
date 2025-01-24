@@ -6,7 +6,7 @@
     <main id="top">
         <div id="particles-js" class="position-absolute overflow-hidden top-0 start-0 w-100 h-100"></div>
         <div class="d-flex justify-content-center align-items-center vh-100">
-            <div class="card shadow-lg p-3 w-100 h-50" style="max-width: 400px; background-color: rgba(255, 255, 255, 0.9);">
+            <div class="card shadow-lg p-3 w-100" style="max-width: 400px; background-color: rgba(255, 255, 255, 0.9);">
                 <div class="card-body">
                     <h3 class="text-center mb-3">Sign In</h3>
                     <form method="POST" action="{{ route('login') }}">

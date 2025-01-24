@@ -40,20 +40,11 @@ class TripController extends Controller
             'person_num' => 'required|numeric',
         ]);
 
-        // create new Trip
-        $trip = new Trip([
-            'from_location' => $validatedData['from_location'],
-            'dest_location' => $validatedData['dest_location'],
-            'depart_date' => $validatedData['depart_date'],
-            'return_date' => $validatedData['return_date'],
-            'budget' => $validatedData['budget'],
-            'person_num' => $validatedData['person_num'],
-            'user_id' => Auth::id(),
-        ]);
+        // Create a new Trip
+        $trip = new Trip(array_merge($validatedData, ['user_id' => Auth::id()]));
 
         // Fetch geocode data
         $geocodeData = $this->findGeoCode($validatedData['dest_location']);
-        // dd($geocodeData);
 
         if (!$geocodeData || empty($geocodeData['results'])) {
             Log::error('Error occurred while fetching data from Google Geocoding API');
@@ -76,7 +67,7 @@ class TripController extends Controller
                 ? $this->findPlacePhoto($place['photos'][0]['photo_reference'])
                 : null;
             $hotel = new Place([
-                'trip_id' => $trip->get('trip_id'),
+                'place_id' => $place['place_id'],
                 'place_name' => $place['name'],
                 'address' => $place['vicinity'] ?? 'N/A',
                 'rating' => $place['rating'] ?? 'N/A',
@@ -91,10 +82,9 @@ class TripController extends Controller
         // Find poi using geocode data
         $poiData = $this->findPlace($geocodeData['results'][0]['geometry']['location'], 'museum|tourist_attraction|point_of_interest');
 
-
         if (!$poiData || empty($poiData['results'])) {
             Log::error('Error occured while fetching data from Google Place API');
-            return view('error.fail')->with('error', 'Error occured while fetching data from Google Place API');
+            return view('error.fail')->with('error', 'Error occured while fetching data from Google Place API. API: POI Data');
         }
 
         // find poi image and insert into hotel object
@@ -104,7 +94,7 @@ class TripController extends Controller
                 ? $this->findPlacePhoto($place['photos'][0]['photo_reference'])
                 : null;
             $poi = new Place([
-                'trip_id' => $trip->get('trip_id'),
+                'place_id' => $place['place_id'],
                 'place_name' => $place['name'],
                 'address' => $place['vicinity'] ?? 'N/A',
                 'rating' => $place['rating'] ?? 'N/A',
