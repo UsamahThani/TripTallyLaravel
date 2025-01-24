@@ -40,9 +40,6 @@ class TripController extends Controller
             'person_num' => 'required|numeric',
         ]);
 
-        // Create a new Trip
-        $trip = new Trip(array_merge($validatedData, ['user_id' => Auth::id()]));
-
         // Fetch geocode data
         $geocodeData = $this->findGeoCode($validatedData['dest_location']);
 
@@ -51,67 +48,22 @@ class TripController extends Controller
             return view('error.fail')->with('error', 'Error occurred while fetching data from Google Geocoding API. API: Geocode Data');
         }
 
+        $cordinate = $geocodeData['results'][0]['geometry']['location'];
+        
+        // Create a new Trip
+        $trip = new Trip(array_merge($validatedData, ['user_id' => Auth::id()]));
+
+        // save trip in the session
+        session()->put('tripData', array_merge($trip->toArray(), ['cordinate' => $cordinate]));
+        session()->put('searchType', 'hotel');
+
         // Find hotel using geocode data
-        $hotelData = $this->findPlace($geocodeData['results'][0]['geometry']['location'], 'lodging');
+        // $hotelData = $this->findPlace($cordinate, 'lodging', $validatedData['budget']);
 
+        // // Find poi using geocode data
+        // $poiData = $this->findPlace($cordinate, 'museum|tourist_attraction|point_of_interest', $validatedData['budget']);
 
-        if (!$hotelData || empty($hotelData['results'])) {
-            Log::error('Error occured while fetching data from Google Place API');
-            return view('error.fail')->with('error', 'Error occured while fetching data from Google Place API. API: Hotel Data');
-        }
-
-        // find hotel image and insert into hotel object
-        $hotelsList = [];
-        foreach ($hotelData['results'] as $place) {
-            $photoURL = isset($place['photos'][0]['photo_reference'])
-                ? $this->findPlacePhoto($place['photos'][0]['photo_reference'])
-                : null;
-            $hotel = new Place([
-                'place_id' => $place['place_id'],
-                'place_name' => $place['name'],
-                'address' => $place['vicinity'] ?? 'N/A',
-                'rating' => $place['rating'] ?? 'N/A',
-                'price' => $this->generatePOIPrice($validatedData['budget'], 'lodging'),
-                'user_rating_total' => $place['user_ratings_total'] ?? 'N/A',
-                'photo_url' => $photoURL
-            ]);
-            $hotelsList[] = $hotel;
-        }
-
-
-        // Find poi using geocode data
-        $poiData = $this->findPlace($geocodeData['results'][0]['geometry']['location'], 'museum|tourist_attraction|point_of_interest');
-
-        if (!$poiData || empty($poiData['results'])) {
-            Log::error('Error occured while fetching data from Google Place API');
-            return view('error.fail')->with('error', 'Error occured while fetching data from Google Place API. API: POI Data');
-        }
-
-        // find poi image and insert into hotel object
-        $poiList = [];
-        foreach ($poiData['results'] as $place) {
-            $photoURL = isset($place['photos'][0]['photo_reference'])
-                ? $this->findPlacePhoto($place['photos'][0]['photo_reference'])
-                : null;
-            $poi = new Place([
-                'place_id' => $place['place_id'],
-                'place_name' => $place['name'],
-                'address' => $place['vicinity'] ?? 'N/A',
-                'rating' => $place['rating'] ?? 'N/A',
-                'price' => $this->generatePOIPrice($validatedData['budget'], 'museum|tourist_attraction|point_of_interest'),
-                'user_rating_total' => $place['user_ratings_total'] ?? 'N/A',
-                'photo_url' => $photoURL
-            ]);
-            $poiList[] = $poi;
-        }
-
-        // Store hotelsList and poiList in the session
-        session(['hotelsList' => $hotelsList]);
-        session(['poiList' => $poiList]);
-
-        dd(session());
-
-        // return redirect('/trip/hotel');
+        return redirect()->route('search.place');
     }
 
     /**
@@ -128,16 +80,51 @@ class TripController extends Controller
     /**
      * Find places near given coordinates
      */
-    private function findPlace(array $location, $placeType): array
+    public function fetchPlaceData()
     {
         $radius = 5000; // Search radius in meters
+        $tripData = session('tripData');
+        $location = $tripData['cordinate'];
+        
+        if (session('searchType') === 'hotel') {
+            $placeType = 'lodging';
+            $route = 'trip.hotel';
+        } elseif (session('searchType') === 'poi') {
+            $placeType = 'museum|tourist_attraction|point_of_interest';
+            $route = 'trip.poi';
+        }
 
-        return Http::get('https://maps.googleapis.com/maps/api/place/nearbysearch/json', [
+        $placeData = Http::get('https://maps.googleapis.com/maps/api/place/nearbysearch/json', [
             'location' => "{$location['lat']},{$location['lng']}",
             'radius' => $radius,
             'type' => $placeType,
             'key' => $this->googleKey,
         ])->json();
+
+        if (!$placeData || empty($placeData['results'])) {
+            Log::error('Error occured while fetching data from Google Place API');
+            return view('error.fail')->with('error', 'Error occured while fetching data from Google Place API. \nCode:' . $placeType);
+        }
+
+        // find hotel image and insert into hotel object
+        $placeList = [];
+        foreach ($placeData['results'] as $place) {
+            $photoURL = isset($place['photos'][0]['photo_reference'])
+                ? $this->findPlacePhoto($place['photos'][0]['photo_reference'])
+                : null;
+            $spot = new Place([
+                'place_id' => $place['place_id'],
+                'place_name' => $place['name'],
+                'address' => $place['vicinity'] ?? 'N/A',
+                'rating' => $place['rating'] ?? 'N/A',
+                'price' => $this->generatePOIPrice($tripData['budget'], $placeType),
+                'user_rating_total' => $place['user_ratings_total'] ?? 'N/A',
+                'photo_url' => $photoURL
+            ]);
+            $placeList[] = $spot;
+        }
+
+        return view('user.hotel', ['placeList' => $placeList]);
     }
 
     /**
@@ -145,12 +132,13 @@ class TripController extends Controller
      */
     private function findPlacePhoto($img_ref)
     {
-
-        return Http::get('https://maps.googleapis.com/maps/api/place/photo', [
+        $response = Http::get('https://maps.googleapis.com/maps/api/place/photo', [
             'maxwidth' => 400,
             'photoreference' => $img_ref,
             'key' => $this->googleKey,
         ]);
+
+        return $response->effectiveUri();
     }
 
     /**

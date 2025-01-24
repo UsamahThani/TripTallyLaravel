@@ -1,10 +1,25 @@
-@import '@fortawesome/fontawesome-free/css/fontawesome.css';
-@import '@fortawesome/fontawesome-free/css/regular.css';
-@import '@fortawesome/fontawesome-free/css/solid.css';
-@import '@fortawesome/fontawesome-free/css/brands.css';
-@import 'bootstrap/dist/css/bootstrap.min.css';
+@import "@fortawesome/fontawesome-free/css/fontawesome.css";
+@import "@fortawesome/fontawesome-free/css/regular.css";
+@import "@fortawesome/fontawesome-free/css/solid.css";
+@import "@fortawesome/fontawesome-free/css/brands.css";
+@import "bootstrap/dist/css/bootstrap.min.css";
 
 #particles-js {
     background-color: #292929;
     z-index: 0;
+}
+
+.card {
+    border: 1px solid #ccc; /* Light grey border */
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    transition: all 0.3s ease; /* Smooth transition for hover effects */
+    overflow: hidden; /* Ensure content does not overflow rounded corners */
+}
+
+/* Make the card pop slightly when hovered */
+.card:hover {
+    transform: translateY(-5px); /* Lift the card slightly */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Increase shadow intensity */
+    border-color: #b3b3b3; /* Slightly darker grey border on hover */
 }

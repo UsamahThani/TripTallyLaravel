@@ -64,11 +64,13 @@ Route::controller(TripController::class)->group(function() {
     Route::post('/trip/place', 'searchPlace')->name('trip.place');
     Route::get('/trip/hotel', function() {
         return view('user.hotel');
-    });
-});
+    })->name('trip.hotel');
+    Route::get('/search/hotel', 'fetchPlaceData')->name('search.place');
+    
+})->middleware('auth');
 
 // Error Route
 Route::get('/error', function() {
     return view('error.fail');
-})
+})->middleware('auth')
 ?>
