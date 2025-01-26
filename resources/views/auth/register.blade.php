@@ -14,17 +14,17 @@
                         <div class="input-group mb-3">
                             <input type="email" class="form-control" id="email" name="email" placeholder="Email"
                                 required>
-                            <span class="input-group-text"><i class="fa-regular fa-envelope"></i></span>
+                            <span class="input-group-text text-dark"><i class="fa-regular fa-envelope"></i></span>
                         </div>
                         <div class="input-group mb-3">
                             <input type="text" class="form-control" id="name" name="name" placeholder="Full Name"
                                 required>
-                            <span class="input-group-text"><i class="fa-regular fa-user"></i></span>
+                            <span class="input-group-text text-dark"><i class="fa-regular fa-user"></i></span>
                         </div>
                         <div class="input-group mb-3">
                             <input type="password" class="form-control" id="password" name="password"
                                 placeholder="Password" required>
-                            <span class="input-group-text" id="show-pwd"><i class="fa-regular fa-eye"
+                            <span class="input-group-text text-dark" id="show-pwd"><i class="fa-regular fa-eye"
                                     style="cursor: pointer; user-select: none;"></i></span>
                         </div>
                         <div class="strong-pwd w-100 p-2 mb-3 bg-100 rounded-3 justify-content-center"
@@ -51,8 +51,8 @@
                         <div class="input-group mb-3" id="rePasswordDiv">
                             <input type="password" class="form-control" id="rePassword" name="rePassword"
                                 placeholder="Confirm Password" required>
-                            <span class="input-group-text" id="show-repwd"><i id="re-eye-icon" class="fa-regular fa-eye"
-                                    style="cursor: pointer; user-select: none;"></i></span>
+                            <span class="input-group-text text-dark" id="show-repwd"><i id="re-eye-icon"
+                                    class="fa-regular fa-eye" style="cursor: pointer; user-select: none;"></i></span>
                         </div>
                         <button type="submit" id="btn-submit" class="btn btn-primary w-100">Sign Up</button>
                         <div class="d-flex justify-content-center mt-3 mb-3">
@@ -176,7 +176,5 @@
                 }
             });
         });
-
-        
     </script>
 @endsection

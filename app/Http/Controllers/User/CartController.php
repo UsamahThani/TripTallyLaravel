@@ -29,9 +29,14 @@ class CartController extends Controller
         $cart = Place::create($data);
 
         if ($cart) {
-            return redirect()->back()->with('success', 'Place added to cart successfully!');
+            return redirect()->route('trip.poi')->with('success', 'Place added to cart successfully!');
         } else {
             return redirect()->back()->with('error', 'Place added to cart failed!');
         }
+    }
+
+    public function index()
+    {
+        return view('user.cart');
     }
 }

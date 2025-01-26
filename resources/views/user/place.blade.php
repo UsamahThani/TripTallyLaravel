@@ -22,7 +22,7 @@
                                     <p>{{ $place['rating'] }}/5</p>
                                 </div>
                                 <div class="mt-auto w-100 d-flex justify-content-between">
-                                    <form action="{{ route('trip.create') }}" method="POST">
+                                    <form action="{{ route('cart.create') }}" method="POST">
                                         @csrf
                                         <input type="hidden" name="place_id" value="{{ $place['place_id'] }}">
                                         <input type="hidden" name="place_name" value="{{ $place['place_name'] }}">

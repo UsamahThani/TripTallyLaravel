@@ -13,6 +13,7 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Hash;
 use AiFaiz\Malaysia\MyStates;
 use Illuminate\Support\Facades\Log;
+use App\Models\Trip;
 
 class AuthController extends Controller
 {
@@ -20,10 +21,11 @@ class AuthController extends Controller
     /**
      * Show the index.
      */
-    public function index() {
+    public function index()
+    {
         $state = MyStates::getStates();
-        
-        return view('user/index', ['states' => $state]);
+        $cart = Trip::where('user_id', Auth::id())->get();
+        return view('user/index', ['states' => $state, 'cart' => $cart]);
     }
 
     /**
@@ -32,11 +34,11 @@ class AuthController extends Controller
     public function redirect()
     {
         return Socialite::driver('google')
-        ->with([
-            'access_type' => 'offline', 
-            'prompt' => 'consent'
-        ])
-        ->redirect();
+            ->with([
+                'access_type' => 'offline',
+                'prompt' => 'consent'
+            ])
+            ->redirect();
     }
 
     /**
@@ -60,7 +62,7 @@ class AuthController extends Controller
                 'avatar' => $user->avatar_original,
                 'access_token' => $user->token,
                 'refresh_token' => $user->refreshToken,
-                'expires_in' => $user -> expiresIn
+                'expires_in' => $user->expiresIn
             ]);
             // Log the user in if they already exist
             Auth::login($existingUser);
@@ -76,7 +78,7 @@ class AuthController extends Controller
                 'google_id' => $user->id,
                 'access_token' => $user->token,
                 'refresh_token' => $user->refreshToken,
-                'expires_in' => $user -> expiresIn
+                'expires_in' => $user->expiresIn
             ]);
             Auth::login($newUser);
         }
@@ -138,7 +140,7 @@ class AuthController extends Controller
             $request->session()->regenerate();
             $request->session()->put('username', Auth::user()->name);
             $request->session()->put('userID', Auth::user()->id);
-            
+
             return redirect('/index');
         }
 

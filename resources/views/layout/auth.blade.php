@@ -13,7 +13,6 @@
     <link href="https://fonts.googleapis.com/css?family=Roboto:300,400&display=swap" rel="stylesheet">
     @vite('resources/css/app.css')
     <link href="{{ asset('css/theme.css') }}" rel="stylesheet" />
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
 
 
@@ -25,7 +24,8 @@
         <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
             <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true"
                 data-delay="5000">
-                <div class="toast-header {{ session('success') ? 'bg-success' : (session('error') ? 'bg-danger' : '') }} text-white">
+                <div
+                    class="toast-header {{ session('success') ? 'bg-success' : (session('error') ? 'bg-danger' : '') }} text-white">
                     <img src="{{ asset('img/favicons/favicon-32x32.png') }}" class="rounded me-2" alt="...">
                     <strong class="me-auto">{{ config('app.name') }}</strong>
                     <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
@@ -41,8 +41,34 @@
         </div>
     @endif
 
+    <main id="top">
+        <nav class="navbar navbar-expand-lg fixed-top py-3 backdrop" data-navbar-on-scroll="data-navbar-on-scroll">
+            <div class="container"><a class="navbar-brand d-flex align-items-center fw-bold fs-2"
+                    href="{{ route('welcome') }}"> <img class="d-inline-block align-top img-fluid"
+                        src="{{ asset('img/gallery/logo-icon.png') }}" alt="" width="50" /><span
+                        class="text-primary fs-4 ps-2">TripTally</span></a>
+                <button class="navbar-toggler collapsed" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                    aria-expanded="false" aria-label="Toggle navigation"><span
+                        class="navbar-toggler-icon"></span></button>
+                <div class="collapse navbar-collapse border-top border-lg-0 mt-4 mt-lg-0" id="navbarSupportedContent">
+                    {{-- <ul class="navbar-nav ms-auto pt-2 pt-lg-0">
+                        <li class="nav-item"><a class="nav-link active" aria-current="page" href="#">Home</a></li>
+                        <li class="nav-item"><a class="nav-link text-600" href="#featuresVideos">Video</a></li>
+                        <li class="nav-item"><a class="nav-link text-600" href="#places">Destinations</a></li>
+                        <li class="nav-item"><a class="nav-link text-600" href="#booking">Booking </a></li>
+                    </ul>
+                    <div class="ps-lg-5">
+                        <a href="{{ route('getLogin') }}" class="btn btn-lg btn-outline-primary order-0"
+                            type="submit">Sign
+                            In</a>
+                    </div> --}}
+                </div>
+            </div>
+        </nav>
+        @yield('content')
 
-    @yield('content')
+    </main>
 
 
     <!-- Javascript -->
