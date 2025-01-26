@@ -9,6 +9,7 @@
     <link rel="manifest" href="{{ asset('img/favicons/manifest.json') }}">
     <meta name="msapplication-TileImage" content="{{ asset('img/favicons/mstile-150x150.png') }}">
     <meta name="theme-color" content="#ffffff">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 
 
     <!-- ===============================================-->
@@ -42,7 +43,8 @@
         </div>
     @endif
     <main class="main" id="top">
-        <nav class="navbar navbar-expand-lg fixed-top py-3 backdrop" data-navbar-on-scroll="data-navbar-on-scroll">
+        <nav class="navbar navbar-expand-lg fixed-top py-3 backdrop default-navbar"
+            data-navbar-on-scroll="data-navbar-on-scroll">
             <div class="container">
                 <a class="navbar-brand d-flex align-items-center fw-bold fs-2" href="{{ route('index') }}">
                     <img class="d-inline-block align-top img-fluid" src="{{ asset('img/gallery/logo-icon.png') }}"
@@ -53,18 +55,26 @@
                         class="navbar-toggler-icon"></span></button>
                 <div class="collapse navbar-collapse  mt-4 mt-lg-0" id="navbarSupportedContent">
                     <ul class="navbar-nav ms-auto pt-2 pt-lg-0">
-                        {{-- <li class="nav-item"><a class="nav-link active" aria-current="page" href="#">Home</a></li>
-                  <li class="nav-item"><a class="nav-link text-600" href="#featuresVideos">Video</a></li>
-                  <li class="nav-item"><a class="nav-link text-600" href="#places">Destinations</a></li>
-                  <li class="nav-item"><a class="nav-link text-600" href="#booking">Booking </a></li> --}}
+                        @isset($placeList)
+                            <li class="nav-item"><a
+                                    class="nav-link {{ session('searchType') === 'Hotels' ? 'active' : '' }}"
+                                    aria-current="page" href="{{ route('trip.hotel') }}">Hotels</a>
+                            </li>
+                            <li class="nav-item"><a
+                                    class="nav-link {{ session('searchType') === 'Attractions' ? 'active' : '' }}"
+                                    aria-current="page" href="{{ route('trip.poi') }}">Attractions</a>
+                            </li>
+                        @endisset
                     </ul>
                     <div class="ps-lg-5 d-flex align-items-center">
                         <a href="{{ route('trip.hotel') }}" class="h-100 position-relative me-3">
                             <i class="fa-solid fa-cart-shopping fa-lg"></i>
-                            <span
-                                class="position-absolute top-20 start-90 translate-middle p-1 bg-danger border border-light rounded-circle">
-                                <span class="visually-hidden">items in cart</span>
-                            </span>
+                            @isset($cart)
+                                <span
+                                    class="position-absolute top-20 start-90 translate-middle p-1 bg-danger border border-light rounded-circle">
+                                    <span class="visually-hidden">items in cart</span>
+                                </span>
+                            @endisset
                         </a>
                         <div class="dropdown">
                             <img src="{{ Auth::user()->avatar ?? asset('img/icons/user_avatar.jpg') }}"
@@ -112,11 +122,25 @@
         }
 
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('DOM fully loaded and parsed'); // Debug message
-            var toast = document.getElementById('liveToast');
-            if (toast) {
-                console.log('Toast element found'); // Debug message
-                var bsToast = new bootstrap.Toast(toast);
+
+
+            const navbar = document.querySelector('.navbar');
+            window.addEventListener('scroll', function() {
+                if (window.scrollY > 50) {
+                    navbar.classList.add('scrolled-navbar');
+                    navbar.classList.remove('default-navbar');
+                } else {
+                    navbar.classList.add('default-navbar');
+                    navbar.classList.remove('scrolled-navbar');
+                }
+            });
+        });
+    </script>
+    <script>
+        $(document).ready(function() {
+            var toast = $('#liveToast');
+            if (toast.length) {
+                var bsToast = new bootstrap.Toast(toast[0]);
                 bsToast.show();
             }
         });

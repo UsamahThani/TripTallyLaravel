@@ -1,9 +1,10 @@
 <?php
 
 use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\User\CartController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\VerificationController; 
-use App\Http\Controllers\Trip\TripController;
+use App\Http\Controllers\User\TripController;
 
 /*
 |--------------------------------------------------------------------------
@@ -62,12 +63,29 @@ Route::controller(VerificationController::class)->group(function () {
 Route::controller(TripController::class)->group(function() {
     // trip finder route
     Route::post('/trip/place', 'searchPlace')->name('trip.place');
-    Route::get('/trip/hotel', function() {
-        return view('user.hotel');
+
+    // search place function route
+    Route::get('/search/place', 'fetchPlaceData')->name('search.place');
+    
+    // trip hotel view route
+    Route::get('/trip/place/hotel', function() {
+        session(['searchType' => 'Hotels']);
+        return redirect()->route('search.place');
     })->name('trip.hotel');
-    Route::get('/search/hotel', 'fetchPlaceData')->name('search.place');
+
+    // trip place view route
+    Route::get('/trip/place/poi', function() {
+        session(['searchType' => 'Attractions']);
+        return redirect()->route('search.place');
+    })->name('trip.poi');
     
 })->middleware('auth');
+
+// Cart Route
+Route::controller(CartController::class)->group(function() {
+    // add to cart route
+    Route::post('/trip/place/create', 'create')->name('trip.create');
+});
 
 // Error Route
 Route::get('/error', function() {

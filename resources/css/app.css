@@ -9,7 +9,7 @@
     z-index: 0;
 }
 
-.card {
+.card-place {
     border: 1px solid #ccc; /* Light grey border */
     border-radius: 8px; /* Rounded corners */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
@@ -18,8 +18,19 @@
 }
 
 /* Make the card pop slightly when hovered */
-.card:hover {
+.card-place:hover {
     transform: translateY(-5px); /* Lift the card slightly */
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Increase shadow intensity */
     border-color: #b3b3b3; /* Slightly darker grey border on hover */
+}
+
+.default-navbar {
+    background-color: transparent;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.scrolled-navbar {
+    background-color: #cfcfcf9a; /* Or your desired color */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
 }

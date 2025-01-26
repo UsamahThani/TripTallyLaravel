@@ -50,7 +50,7 @@
                         <div class="input-group mb-4">
                             <span class="input-group-text text-dark d-flex justify-content-center fw-bold"
                                 style="width: 55px">RM</span>
-                            <input placeholder="Max Budget" min="200" required step="1.00" class="form-control"
+                            <input placeholder="Max Budget" min="200" value="200" required step="1.00" class="form-control"
                                 type="number" style="color:#828282;" name="budget" />
                             <input placeholder="Person" min="1" max="10" required class="form-control"
                                 type="number" style="color:#828282;" name="person_num" />

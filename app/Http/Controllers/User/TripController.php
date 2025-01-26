@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Trip;
+namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
 use App\Models\Place;
@@ -8,7 +8,6 @@ use Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Str;
 use App\Models\Trip;
 
 class TripController extends Controller
@@ -49,21 +48,14 @@ class TripController extends Controller
         }
 
         $cordinate = $geocodeData['results'][0]['geometry']['location'];
-        
+
         // Create a new Trip
-        $trip = new Trip(array_merge($validatedData, ['user_id' => Auth::id()]));
+        $trip = Trip::create(array_merge($validatedData, ['user_id' => Auth::id()]));
 
         // save trip in the session
         session()->put('tripData', array_merge($trip->toArray(), ['cordinate' => $cordinate]));
-        session()->put('searchType', 'hotel');
 
-        // Find hotel using geocode data
-        // $hotelData = $this->findPlace($cordinate, 'lodging', $validatedData['budget']);
-
-        // // Find poi using geocode data
-        // $poiData = $this->findPlace($cordinate, 'museum|tourist_attraction|point_of_interest', $validatedData['budget']);
-
-        return redirect()->route('search.place');
+        return redirect()->route('trip.hotel');
     }
 
     /**
@@ -85,14 +77,25 @@ class TripController extends Controller
         $radius = 5000; // Search radius in meters
         $tripData = session('tripData');
         $location = $tripData['cordinate'];
-        
-        if (session('searchType') === 'hotel') {
+        $placeType = '';
+        if (session('searchType') === 'Hotels') {
             $placeType = 'lodging';
-            $route = 'trip.hotel';
-        } elseif (session('searchType') === 'poi') {
+        } elseif (session('searchType') === 'Attractions') {
             $placeType = 'museum|tourist_attraction|point_of_interest';
-            $route = 'trip.poi';
+        } else {
+            Log::error('Error occured while fetching session data');
+            return view('error.fail')->with('error', 'Error occured while fetching session data');
         }
+
+        // Check if a hotel has already been booked
+        $hotelBooked = Place::where('trip_id', $tripData['trip_id'])
+            ->where('place_type', 'Hotels')
+            ->exists();
+
+        // Get list of booked places
+        $bookedPlaces = Place::where('trip_id', $tripData['trip_id'])
+            ->pluck('place_id')
+            ->toArray();
 
         $placeData = Http::get('https://maps.googleapis.com/maps/api/place/nearbysearch/json', [
             'location' => "{$location['lat']},{$location['lng']}",
@@ -103,7 +106,7 @@ class TripController extends Controller
 
         if (!$placeData || empty($placeData['results'])) {
             Log::error('Error occured while fetching data from Google Place API');
-            return view('error.fail')->with('error', 'Error occured while fetching data from Google Place API. \nCode:' . $placeType);
+            return view('error.fail')->with('error', 'Error occured while fetching data from Google Place API. <br>Code:' . $placeType);
         }
 
         // find hotel image and insert into hotel object
@@ -111,20 +114,23 @@ class TripController extends Controller
         foreach ($placeData['results'] as $place) {
             $photoURL = isset($place['photos'][0]['photo_reference'])
                 ? $this->findPlacePhoto($place['photos'][0]['photo_reference'])
-                : null;
+                : 'https://img.freepik.com/premium-vector/error-404-page-found-vector-concept-icon-internet-website-down-simple-flat-design_570429-4168.jpg?w=1380';
             $spot = new Place([
                 'place_id' => $place['place_id'],
                 'place_name' => $place['name'],
-                'address' => $place['vicinity'] ?? 'N/A',
-                'rating' => $place['rating'] ?? 'N/A',
                 'price' => $this->generatePOIPrice($tripData['budget'], $placeType),
-                'user_rating_total' => $place['user_ratings_total'] ?? 'N/A',
-                'photo_url' => $photoURL
+                'place_location' => $place['vicinity'] ?? 'N/A'
+
             ]);
-            $placeList[] = $spot;
+            $placeList[] = array_merge($spot->toArray(), [
+                'user_rating_total' => $place['user_ratings_total'] ?? 'N/A',
+                'photo_url' => $photoURL,
+                'rating' => $place['rating'] ?? 'N/A',
+
+            ]);
         }
 
-        return view('user.hotel', ['placeList' => $placeList]);
+        return view('user.place', ['placeList' => $placeList, 'hotelBooked' => $hotelBooked, 'bookedPlaces' => $bookedPlaces]);
     }
 
     /**
