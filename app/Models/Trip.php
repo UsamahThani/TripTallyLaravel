@@ -20,8 +20,12 @@ class Trip extends Model
     protected $keyType = 'string'; // UUIDs are stored as strings
 
     // Make sure the trip_id is included in the fillable array
-    protected $fillable = ['trip_id', 'user_id', 'from_location', 'dest_location', 'depart_date', 'return_date', 'person_num', 'budget'];
+    protected $fillable = ['trip_id', 'user_id', 'from_location', 'dest_location', 'depart_date', 'return_date', 'person_num', 'budget', 'grand_total', 'payment_status'];
 
+    protected $attributes = [
+        'grand_total' => 0.00, 
+        'payment_status' => 0,
+    ];
     // Define the relationship with places
     public function places()
     {

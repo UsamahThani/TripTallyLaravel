@@ -44,6 +44,7 @@ Route::controller(AuthController::class)->group(function () {
     // logout route
     Route::get('/logout', function () {
         Auth::logout();
+        session()->flush();
         return redirect('/');
     })->name('logout');
 
@@ -83,15 +84,22 @@ Route::controller(TripController::class)->group(function () {
 
 // Cart Route
 Route::controller(CartController::class)->group(function () {
+    // cart view route
+    Route::get('/trip/cart/index', 'index')->name('cart.index');
+
     // add to cart route
     Route::post('/trip/cart/create', 'create')->name('cart.create');
 
-    // cart view route
-    Route::get('/trip/cart/index', 'index')->name('cart.index');
+    // delete cart item route
+    Route::post('/trip/cart/delete', 'deleteItem')->name('cart.delete');
 });
 
 // Error Route
 Route::get('/error', function () {
     return view('error.fail');
-})->middleware('auth')
-    ?>
+})->middleware('auth');
+
+Route::get('/session-data', function () {
+    return response()->json(session()->all());
+});
+?>

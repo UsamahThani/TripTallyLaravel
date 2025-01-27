@@ -17,6 +17,7 @@
     <!-- ===============================================-->
     @vite('resources/css/app.css')
     <link href="{{ asset('css/theme.css') }}" rel="stylesheet" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 
     <title>@yield('title') | {{ config('app.name') }}</title>
 </head>
@@ -24,7 +25,7 @@
 <body class="{{ Route::currentRouteName() === 'index' ? 'overflow-hidden' : '' }}">
     @if (session('success') || session('error'))
         <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
-            <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true"
+            <div id="liveToast" class="toast show" role="alert" aria-live="assertive" aria-atomic="true"
                 data-delay="5000">
                 <div
                     class="toast-header {{ session('success') ? 'bg-success' : (session('error') ? 'bg-danger' : '') }} text-white">
@@ -55,7 +56,7 @@
                         class="navbar-toggler-icon"></span></button>
                 <div class="collapse navbar-collapse  mt-4 mt-lg-0" id="navbarSupportedContent">
                     <ul class="navbar-nav ms-auto pt-2 pt-lg-0">
-                        @isset($placeList)
+                        @if (session()->has('tripData'))
                             <li class="nav-item"><a
                                     class="nav-link {{ session('searchType') === 'Hotels' ? 'active' : '' }}"
                                     aria-current="page" href="{{ route('trip.hotel') }}">Hotels</a>
@@ -64,7 +65,7 @@
                                     class="nav-link {{ session('searchType') === 'Attractions' ? 'active' : '' }}"
                                     aria-current="page" href="{{ route('trip.poi') }}">Attractions</a>
                             </li>
-                        @endisset
+                        @endif
                     </ul>
                     <div class="ps-lg-5 d-flex align-items-center">
                         <a href="{{ route('cart.index') }}" class="h-100 position-relative me-3">
@@ -105,7 +106,7 @@
         integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous">
     </script>
     @vite('resources/js/app.js')
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
     <script>
         function dropdown() {
             document.getElementById("myDropdown").classList.toggle("show");
@@ -125,7 +126,6 @@
 
         document.addEventListener('DOMContentLoaded', function() {
 
-
             const navbar = document.querySelector('.navbar');
             window.addEventListener('scroll', function() {
                 if (window.scrollY > 50) {
@@ -136,15 +136,19 @@
                     navbar.classList.remove('scrolled-navbar');
                 }
             });
+
         });
-    </script>
-    <script>
-        $(document).ready(function() {
-            var toast = $('#liveToast');
-            if (toast.length) {
-                var bsToast = new bootstrap.Toast(toast[0]);
-                bsToast.show();
+
+        document.addEventListener('DOMContentLoaded', function() {
+            var toast = document.getElementById('liveToast')
+            var btnClose = document.querySelector('.btn-close')
+            if (toast) {
+                var bsToast = new bootstrap.Toast(toast)
+                bsToast.show()
             }
+            btnClose.addEventListener('click', function() {
+                bsToast.hide()
+            })
         });
     </script>
 </body>

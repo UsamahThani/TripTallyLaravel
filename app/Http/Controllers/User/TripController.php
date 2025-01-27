@@ -106,7 +106,7 @@ class TripController extends Controller
 
         if (!$placeData || empty($placeData['results'])) {
             Log::error('Error occured while fetching data from Google Place API');
-            return view('error.fail')->with('error', 'Error occured while fetching data from Google Place API. <br>Code:' . $placeType);
+            return view('error.fail')->with('error', 'Error occured while fetching data from Google Place API. Code: ' . $placeType);
         }
 
         // find hotel image and insert into hotel object

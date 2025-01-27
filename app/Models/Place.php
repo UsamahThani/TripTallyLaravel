@@ -13,7 +13,7 @@ class Place extends Model
     protected $primaryKey = 'cart_id';
     public $incrementing = false;
     protected $keyType = 'string';
-    protected $fillable = ['trip_id', 'place_id', 'place_name', 'place_location', 'price', 'place_type'];
+    protected $fillable = ['trip_id', 'place_id', 'place_name', 'place_location', 'price', 'place_type', 'photo_url'];
     // Disable automatic timestamp handling
     public $timestamps = false;
 
