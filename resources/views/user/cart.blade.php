@@ -90,7 +90,7 @@
                     </div>
                 </div>
                 <div class="col-4">
-                    <div class="w-100 mt-4 mb-5 sticky-top bg-500 text-white p-3" style="top: 10rem;">
+                    <div class="w-100 mt-4 mb-5 sticky-top bg-500 text-white p-3 rounded-1" style="top: 10rem;">
                         <h3 class="fw-bold mt-4">Summary</h3>
                         <hr>
                         <div class="d-flex justify-content-between my-3">

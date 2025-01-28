@@ -80,6 +80,9 @@ Route::controller(TripController::class)->group(function () {
         return redirect()->route('search.place');
     })->name('trip.poi');
 
+    // place detail view route
+    Route::get('/trip/place/detail/{place_id}/{price}', 'details')->name('place.detail');
+
 })->middleware('auth');
 
 // Cart Route

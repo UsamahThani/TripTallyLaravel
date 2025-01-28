@@ -3,7 +3,7 @@
 @section('title', 'Place Result')
 
 @section('content')
-    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11; display: none;">
         <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-delay="5000">
             <div class="toast-header bg-success text-white">
                 <img src="{{ asset('img/favicons/favicon-32x32.png') }}" class="rounded me-2" alt="...">
@@ -40,7 +40,8 @@
                                 </div>
                                 <div class="mt-auto w-100 d-flex justify-content-between">
                                     <form id="cart-form-{{ $place['place_id'] }}" action="{{ route('cart.create') }}"
-                                        method="POST">
+                                        method="POST"
+                                        class="{{ session('searchType') == 'Attractions' ? 'ajax-form' : '' }}">
                                         @csrf
                                         <input type="hidden" name="place_id" value="{{ $place['place_id'] }}">
                                         <input type="hidden" name="place_name" value="{{ $place['place_name'] }}">
@@ -53,10 +54,10 @@
                                         @endphp
                                         <input type="submit"
                                             value="{{ (session('searchType') === 'Hotels' && $hotelBooked) || $isBooked ? 'Booked' : 'Book' }}"
-                                            class="btn btn-secondary booked-btn"
+                                            class="btn btn-success booked-btn"
                                             {{ (session('searchType') === 'Hotels' && $hotelBooked) || $isBooked ? 'disabled' : '' }}>
                                     </form>
-                                    <a href="#" class="btn btn-primary">Details</a>
+                                    <a href="{{ route('place.detail', ['place_id' => $place['place_id'], 'price' => $place['price']]) }}" class="btn btn-primary">Details</a>
                                 </div>
                             </div>
                         </div>
@@ -77,32 +78,39 @@
                 toastHeader.removeClass('bg-success bg-danger');
                 toastHeader.addClass(type === 'success' ? 'bg-success' : 'bg-danger');
 
+                // Show the toast container (make it visible)
+                toastElement.closest('.position-fixed').fadeIn();
+
+                // Show the toast using Bootstrap's Toast API
                 var bsToast = new bootstrap.Toast(toastElement[0]);
                 bsToast.show();
-            }
 
-            $('form[id^="cart-form-"]').on('submit', function(event) {
-                event.preventDefault();
-                var form = $(this);
-                $.ajax({
-                    url: form.attr('action'),
-                    method: form.attr('method'),
-                    data: form.serialize(),
-                    success: function(response) {
-                        console.log('Place added to cart successfully');
-                        form.find('input[type="submit"]').val('Booked').prop('disabled', true);
-                        showToast('Place has been added successfully!', 'success');
-                        if ({{ session('searchType') === 'Hotels' ? 'true' : 'false' }}) {
-                            showToast('Place has been added successfully!', 'success');
-                            window.location.href = "{{ route('trip.poi') }}";
-                        }
-                    },
-                    error: function(response) {
-                        showToast('Place added failed!', 'error');
-                        console.log('Place added to cart failed');
-                    }
+                // Automatically hide the toast container after the toast disappears
+                bsToast._element.addEventListener('hidden.bs.toast', function() {
+                    toastElement.closest('.position-fixed').fadeOut();
                 });
-            });
+            }
+            @if (session('searchType') == 'Attractions')
+                $('form.ajax-form').on('submit', function(event) {
+                    event.preventDefault();
+                    var form = $(this);
+                    $.ajax({
+                        url: form.attr('action'),
+                        method: form.attr('method'),
+                        data: form.serialize(),
+                        success: function(response) {
+                            console.log('Place added to cart successfully');
+                            form.find('input[type="submit"]').val('Booked').prop('disabled',
+                                true);
+                            showToast('Place has been added successfully!', 'success');
+                        },
+                        error: function(response) {
+                            showToast('Place added failed!', 'error');
+                            console.log('Place added to cart failed');
+                        }
+                    });
+                });
+            @endif
         });
     </script>
 @endsection

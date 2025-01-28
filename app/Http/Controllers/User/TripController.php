@@ -165,5 +165,64 @@ class TripController extends Controller
         }
     }
 
+    /**
+     * View place detail
+     */
+    public function details(Request $request)
+    {
+        $place_id = $request->place_id;
+        $price = $request->price;
+        $place = $this->fetchPlaceDetail($place_id, $price);
+        if (!$place) {
+            Log::error('Error occured while fetching data from Google Place Detail API');
+            return view('error.fail')->with('error', 'Error occured while fetching data from Google Place Detail API');
+        }
+        // dd($place->getData());
+
+        return redirect()->route('place.detail')->with($place->getData(true));
+    }
+
+    /**
+     * fetch place details
+     */
+    public function fetchPlaceDetail($place_id, $price)
+    {
+        $response = Http::get('https://maps.googleapis.com/maps/api/place/details/json', [
+            'place_id' => $place_id,
+            'key' => $this->googleKey
+        ]);
+
+        // Check if the response is successful
+        if ($response->successful()) {
+            // Extract the 'result' data from the response
+            $placeDetail = $response->json()['result'] ?? null;
+
+            // Check if the result exists and extract specific data
+            if ($placeDetail) {
+                // Extract the required fields
+                $placeData = [
+                    'formatted_address' => $placeDetail['formatted_address'] ?? 'Address not available',
+                    'current_opening_hours' => $placeDetail['current_opening_hours'] ?? null,
+                    'geometry' => $placeDetail['geometry'] ?? null,
+                    'name' => $placeDetail['name'] ?? 'Name not available',
+                    'opening_hours' => $placeDetail['opening_hours'] ?? null,
+                    'photos' => $placeDetail['photos'] ?? [],
+                    'rating' => $placeDetail['rating'] ?? null,
+                    'reviews' => $placeDetail['reviews'] ?? [],
+                    'types' => $placeDetail['types'] ?? [],
+                    'url' => $placeDetail['url'] ?? null,
+                    'user_ratings_total' => $placeDetail['user_ratings_total'] ?? 0,
+                ];
+
+                // Return the specific data in JSON format
+                return response()->json($placeData);
+            } else {
+                return response()->json(['error' => 'Place details not found'], 404);
+            }
+        } else {
+            // If the request failed, return an error message
+            return response()->json(['error' => 'Failed to fetch place details'], 400);
+        }
+    }
 
 }

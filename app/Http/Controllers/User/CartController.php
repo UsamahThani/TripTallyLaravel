@@ -43,10 +43,20 @@ class CartController extends Controller
 
         if ($cart) {
             session()->flash('success', 'Place added to cart successfully!');
-            return response()->json(['success' => 'Place added to cart successfully!']);
+
+            if (session('searchType') == 'Hotels') {
+                return redirect(route('trip.poi'))->with('success', 'Place added to cart successfully!');;
+            } else {
+                return response()->json(['success' => 'Place added to cart successfully!']);
+            }
         } else {
             session()->flash('error', 'Place added to cart failed!');
-            return response()->json(['error' => 'Place added to cart failed!'], 500);
+            if (session('searchType') == 'Hotels') {
+                return redirect(route('trip.poi'))->with('error', 'Place added to cart failed!');;
+            } else {
+                return response()->json(['error' => 'Place added to cart failed!'], 500);
+            }
+            
         }
     }
 
