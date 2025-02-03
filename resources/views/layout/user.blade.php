@@ -70,15 +70,14 @@
                     <div class="ps-lg-5 d-flex align-items-center">
                         <a href="{{ route('cart.index') }}" class="h-100 position-relative me-3">
                             <i class="fa-solid fa-cart-shopping fa-lg"></i>
-                            @isset($cart)
-                                @if ($cart->isNotEmpty())
-                                    <span
-                                        class="position-absolute top-20 start-90 translate-middle p-1 bg-danger border border-light rounded-circle">
-                                        <span class="visually-hidden">items in cart</span>
-                                    </span>
-                                @endif
-                            @endisset
+                            @if (session('cartExists') && count(session('cartExists')) > 0)
+                                <span
+                                    class="position-absolute top-20 start-90 translate-middle p-1 bg-danger border border-light rounded-circle">
+                                    <span class="visually-hidden">items in cart</span>
+                                </span>
+                            @endif
                         </a>
+
                         <div class="dropdown">
                             <img src="{{ Auth::user()->avatar ?? asset('img/icons/user_avatar.jpg') }}"
                                 class="img-fluid dropbtn" onclick="dropdown()"
@@ -149,6 +148,12 @@
             btnClose.addEventListener('click', function() {
                 bsToast.hide()
             })
+
+            var userAvatar = document.querySelector('.dropbtn');
+
+            userAvatar.onerror = function() {
+                this.src = "{{ asset('img/icons/user_avatar.jpg') }}";
+            };
         });
     </script>
 </body>

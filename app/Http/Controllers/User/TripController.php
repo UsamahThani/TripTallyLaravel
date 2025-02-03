@@ -46,8 +46,7 @@ class TripController extends Controller
             Log::error('Error occurred while fetching data from Google Geocoding API');
             return view('error.fail')->with('error', 'Error occurred while fetching data from Google Geocoding API. API: Geocode Data');
         }
-
-        $cordinate = $geocodeData['results'][0]['geometry']['location'];
+        $cordinate = $geocodeData['results'][0]['geometry']['viewport'];
 
         // Create a new Trip
         $trip = Trip::create(array_merge($validatedData, ['user_id' => Auth::id()]));
@@ -74,9 +73,7 @@ class TripController extends Controller
      */
     public function fetchPlaceData()
     {
-        $radius = 5000; // Search radius in meters
         $tripData = session('tripData');
-        $location = $tripData['cordinate'];
         $placeType = '';
         if (session('searchType') === 'Hotels') {
             $placeType = 'lodging';
@@ -97,10 +94,9 @@ class TripController extends Controller
             ->pluck('place_id')
             ->toArray();
 
-        $placeData = Http::get('https://maps.googleapis.com/maps/api/place/nearbysearch/json', [
-            'location' => "{$location['lat']},{$location['lng']}",
-            'radius' => $radius,
-            'type' => $placeType,
+        $placeData = Http::get('https://maps.googleapis.com/maps/api/place/textsearch/json', [
+            'query' => "{$placeType},{$tripData['dest_location']}",
+            'components' => 'administrative_area',
             'key' => $this->googleKey,
         ])->json();
 
@@ -108,6 +104,7 @@ class TripController extends Controller
             Log::error('Error occured while fetching data from Google Place API');
             return view('error.fail')->with('error', 'Error occured while fetching data from Google Place API. Code: ' . $placeType);
         }
+        // dd($placeData);
 
         // find hotel image and insert into hotel object
         $placeList = [];
@@ -119,7 +116,7 @@ class TripController extends Controller
                 'place_id' => $place['place_id'],
                 'place_name' => $place['name'],
                 'price' => $this->generatePOIPrice($tripData['budget'], $placeType),
-                'place_location' => $place['vicinity'] ?? 'N/A'
+                'place_location' => $place['formatted_address'] ?? 'N/A'
 
             ]);
             $placeList[] = array_merge($spot->toArray(), [
@@ -132,6 +129,7 @@ class TripController extends Controller
 
         return view('user.place', ['placeList' => $placeList, 'hotelBooked' => $hotelBooked, 'bookedPlaces' => $bookedPlaces]);
     }
+
 
     /**
      * Find place image
@@ -177,9 +175,19 @@ class TripController extends Controller
             Log::error('Error occured while fetching data from Google Place Detail API');
             return view('error.fail')->with('error', 'Error occured while fetching data from Google Place Detail API');
         }
-        // dd($place->getData());
-
-        return redirect()->route('place.detail')->with($place->getData(true));
+        // find photos
+        $placePhotos = $place['photos'];
+        $firstPhoto = "";
+        $otherPhoto = [];
+        foreach ($placePhotos as $index => $photo) {
+            if ($index == 0) {
+                $firstPhoto = $this->findPlacePhoto($photo['photo_reference']);
+            } else {
+                $otherPhoto[] = $this->findPlacePhoto($photo['photo_reference']);
+            }
+        }
+        // dd($otherPhoto);
+        return view('user.placedetails')->with('placeData', $place)->with('firstPhoto', $firstPhoto)->with('otherPhoto', $otherPhoto);
     }
 
     /**
@@ -201,7 +209,7 @@ class TripController extends Controller
             if ($placeDetail) {
                 // Extract the required fields
                 $placeData = [
-                    'formatted_address' => $placeDetail['formatted_address'] ?? 'Address not available',
+                    'address' => $placeDetail['formatted_address'] ?? 'Address not available',
                     'current_opening_hours' => $placeDetail['current_opening_hours'] ?? null,
                     'geometry' => $placeDetail['geometry'] ?? null,
                     'name' => $placeDetail['name'] ?? 'Name not available',
@@ -210,12 +218,14 @@ class TripController extends Controller
                     'rating' => $placeDetail['rating'] ?? null,
                     'reviews' => $placeDetail['reviews'] ?? [],
                     'types' => $placeDetail['types'] ?? [],
-                    'url' => $placeDetail['url'] ?? null,
                     'user_ratings_total' => $placeDetail['user_ratings_total'] ?? 0,
+                    'phone_num' => $placeDetail['formatted_phone_number'] ?? null,
+                    'website' => $placeDetail['website'] ?? null,
+                    'price' => $price
                 ];
-
+                // dd($placeData['opening_hours']);
                 // Return the specific data in JSON format
-                return response()->json($placeData);
+                return $placeData;
             } else {
                 return response()->json(['error' => 'Place details not found'], 404);
             }

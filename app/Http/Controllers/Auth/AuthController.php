@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Models\Place;
 use Laravel\Socialite\Facades\Socialite;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
@@ -24,8 +25,10 @@ class AuthController extends Controller
     public function index()
     {
         $state = MyStates::getStates();
-        $cart = Trip::where('user_id', Auth::id())->get();
-        return view('user/index', ['states' => $state, 'cart' => $cart]);
+        $trip = Trip::where('user_id', Auth::id())->get()->first();
+        $cart = $trip ? Place::where('trip_id', $trip->id)->get() : collect();
+        request()->session()->put('cartExists', $cart);
+        return view('user/index', ['states' => $state]);
     }
 
     /**

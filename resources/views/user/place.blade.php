@@ -33,7 +33,9 @@
                                 style="height: 200px;" alt="hotel image">
                             <div class="card-body d-flex flex-column">
                                 <h6 class="card-title fw-bold">{{ $place['place_name'] }}</h6>
-                                <p class="card-text" style="font-size: 12px">{{ $place['place_location'] }}</p>
+                                <p class="card-text" style="font-size: 12px">
+                                    {{ Str::limit($place['place_location'], 80, '...') }}
+                                </p>
                                 <div class="price-rating w-100 d-flex justify-content-between align-items-center mt-auto">
                                     <p>RM {{ $place['price'] }}</p>
                                     <p>{{ $place['rating'] }}/5</p>
