@@ -176,7 +176,7 @@ class TripController extends Controller
             return view('error.fail')->with('error', 'Error occured while fetching data from Google Place Detail API');
         }
         // find photos
-        $placePhotos = $place['photos'];
+        $placePhotos = $place['photos'] ?? [];
         $firstPhoto = "";
         $otherPhoto = [];
         foreach ($placePhotos as $index => $photo) {
