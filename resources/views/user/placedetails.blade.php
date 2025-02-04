@@ -39,6 +39,16 @@
         #primary-img {
             transition: opacity 0.5s ease-in-out;
         }
+
+        #map {
+            height: 400px;
+            width: 100%;
+        }
+
+        #street-view {
+            height: 400px;
+            width: 100%;
+        }
     </style>
     <section>
         <div class="container">
@@ -176,17 +186,29 @@
                 </div>
             </div>
         </div>
-    </section>
-    <section class="bg-primary">
-        <div class="container bg-success">
+        <div class="container">
             <div class="title d-flex w-100 justify-content-center my-4">
                 <h2 class="fw-bold">Location</h2>
+            </div>
+            <div class="place-iframe p-3 bg-light rounded">
+                <div id="map" class="mb-2 rounded"></div>
+                <div id="street-view" class="rounded"></div>
+            </div>
+        </div>
+        <div class="container">
+            <div class="title d-flex w-100 justify-content-center my-4">
+                <h2 class="fw-bold">Review</h2>
             </div>
             <div class="place-iframe p-3 bg-light rounded">
                 
             </div>
         </div>
     </section>
+    <section>
+        
+    </section>
+    <script src="https://maps.googleapis.com/maps/api/js?key={{ config('services.google.api_key') }}&callback=initMap"
+        async defer></script>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             const container = document.querySelector(".set-img");
@@ -237,6 +259,64 @@
                 // Restore opacity
                 primaryImg.style.opacity = 1;
             }, 500); // Match the duration of the CSS transition
+        }
+
+        function initMap() {
+            // Get Latitude and Longitude from Laravel Session
+            var lat = {{ $placeData['geometry']['location']['lat'] }}; // Default: KL
+            var lng = {{ $placeData['geometry']['location']['lng'] }}; // Default: KL
+            var location = {
+                lat: lat,
+                lng: lng
+            };
+
+            // Initialize Google Map
+            var map = new google.maps.Map(document.getElementById("map"), {
+                center: location,
+                zoom: 14
+            });
+
+            // Initialize Street View
+            var streetView = new google.maps.StreetViewPanorama(
+                document.getElementById("street-view"), {
+                    position: location,
+                    pov: {
+                        heading: 165,
+                        pitch: 0
+                    },
+                    zoom: 1
+                }
+            );
+
+            // Connect Street View to the map
+            map.setStreetView(streetView);
+
+            // Add a marker to the map
+            var marker = new google.maps.Marker({
+                position: location,
+                map: map,
+                draggable: true
+            });
+
+            // Update Street View when marker is moved
+            marker.addListener("dragend", function(event) {
+                var newLocation = {
+                    lat: event.latLng.lat(),
+                    lng: event.latLng.lng()
+                };
+                map.setCenter(newLocation);
+                streetView.setPosition(newLocation);
+            });
+
+            // Update marker when clicking on the map
+            map.addListener("click", function(event) {
+                var newLocation = {
+                    lat: event.latLng.lat(),
+                    lng: event.latLng.lng()
+                };
+                // marker.setPosition(newLocation);
+                streetView.setPosition(newLocation);
+            });
         }
     </script>
 @endsection

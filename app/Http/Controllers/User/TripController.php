@@ -223,7 +223,7 @@ class TripController extends Controller
                     'website' => $placeDetail['website'] ?? null,
                     'price' => $price
                 ];
-                // dd($placeData['opening_hours']);
+                dd($placeData['reviews']);
                 // Return the specific data in JSON format
                 return $placeData;
             } else {
